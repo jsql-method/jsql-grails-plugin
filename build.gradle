@@ -1,0 +1,150 @@
+import org.gradle.api.publish.maven.MavenPublication
+
+buildscript {
+    ext {
+        grailsVersion = project.grailsVersion
+    }
+    repositories {
+        mavenLocal()
+        maven { url "https://repo.grails.org/grails/core" }
+        maven {
+            url "${artifactory_releaseUrl}"
+            credentials {
+                username = "${artifactory_user}"
+                password = "${artifactory_password}"
+            }
+        }
+    }
+    dependencies {
+        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4+"
+        classpath "org.grails:grails-gradle-plugin:$grailsVersion"
+        classpath "com.bertramlabs.plugins:asset-pipeline-gradle:2.8.2"
+        classpath "org.grails.plugins:hibernate4:5.0.10"
+    }
+}
+
+version "1.0.0"
+group "it.jsql.connector.grails"
+apply plugin: "com.jfrog.artifactory"
+apply plugin: "war"
+apply plugin: "eclipse"
+apply plugin: "idea"
+apply plugin: "org.grails.grails-plugin"
+apply plugin: "org.grails.grails-plugin-publish"
+apply plugin: "org.grails.grails-gsp"
+apply plugin: "asset-pipeline"
+
+ext {
+    grailsVersion = project.grailsVersion
+    gradleWrapperVersion = project.gradleWrapperVersion
+}
+
+repositories {
+    mavenLocal()
+    maven { url "https://repo.grails.org/grails/core" }
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.grails:grails-bom:$grailsVersion"
+    }
+    applyMavenExclusions false
+}
+
+dependencies {
+    compile "org.springframework.boot:spring-boot-starter-logging:2.1.0.RELEASE"
+    compile "org.springframework.boot:spring-boot-autoconfigure:2.1.0.RELEASE"
+    compile "org.grails:grails-core:3.3.3"
+    compile "org.springframework.boot:spring-boot-starter-actuator:2.1.0.RELEASE"
+    compile "org.springframework.boot:spring-boot-starter-tomcat:2.1.0.RELEASE"
+    compile "org.grails.plugins:hibernate4"
+    compile "org.grails:grails-dependencies:3.3.3"
+    compile "org.grails:grails-web-boot"
+    compile "org.grails.plugins:cache:3.0.2"
+    compile "org.grails.plugins:scaffolding"
+    console "org.grails:grails-console:3.3.3"
+    profile "org.grails.profiles:web-plugin:3.1.8"
+    provided "org.grails:grails-plugin-services:3.3.3"
+    provided "org.grails:grails-plugin-domain-class:3.3.3"
+    runtime "com.bertramlabs.plugins:asset-pipeline-grails:2.14.1"
+    testCompile "org.grails:grails-plugin-testing:3.3.0.M2"
+    testCompile "org.grails.plugins:geb"
+    testRuntime "org.seleniumhq.selenium:selenium-htmlunit-driver:2.52.0"
+    testRuntime "net.sourceforge.htmlunit:htmlunit:2.33"
+    compile group: 'log4j', name: 'log4j', version: '1.2.17'
+}
+
+/*
+grailsPublish {
+    // TODO: Provide values here
+    user = 'user'
+    key = 'key'
+    githubSlug = 'foo/bar'
+    license {
+        name = 'Apache-2.0'
+    }
+    title = "jSQL Grails Connector"
+    desc = "Plugin for Grails to connect with jSQL services"
+    developers = [johndoe: "John Doe"]
+    portalUser = ""
+    portalPassword = ""
+}
+*/
+
+artifactory {
+    contextUrl = "${artifactory_contextUrl}"   //The base Artifactory URL if not overridden by the publisher/resolver
+    publish {
+        repository {
+            repoKey = 'libs-release-local'
+            username = "${artifactory_user}"
+            password = "${artifactory_password}"
+            maven = true
+        }
+        defaults {
+            publications('mavenJava')
+            publishArtifacts = true
+            properties = ['qa.level': 'basic', 'dev.team' : 'core']
+            publishPom = true
+        }
+    }
+    resolve {
+        repository {
+            repoKey = 'libs-release'
+            username = "${artifactory_user}"
+            password = "${artifactory_password}"
+            maven = true
+
+        }
+    }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+}
+
+assets {
+    packagePlugin = true
+}
+
+artifactoryPublish {
+    dependsOn jar
+}
+
+jar {
+    baseName = 'jsql-grails-plugin'
+    version = "1.0"
+    doLast {
+        copy {
+            from "build/libs"
+            into "${deployDir}"
+            include "*.jar"
+        }
+    }
+}
+
+
+
