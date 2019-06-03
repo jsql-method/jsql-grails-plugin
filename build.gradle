@@ -24,9 +24,6 @@ buildscript {
 }
 
 apply plugin: 'maven'
-version "1.0.0"
-group "it.jsql.connector.grails"
-//apply plugin: "com.jfrog.artifactory"
 apply plugin: "war"
 apply plugin: "eclipse"
 apply plugin: "idea"
@@ -63,6 +60,7 @@ dependencies {
     compile "org.grails:grails-web-boot"
     compile "org.grails.plugins:cache:3.0.2"
     compile "org.grails.plugins:scaffolding"
+    compile 'com.google.code.gson:gson:2.8.5'
     console "org.grails:grails-console:3.3.3"
     profile "org.grails.profiles:web-plugin:3.1.8"
     provided "org.grails:grails-plugin-services:3.3.3"
@@ -75,57 +73,13 @@ dependencies {
     compile group: 'log4j', name: 'log4j', version: '1.2.17'
 }
 
-/*
-grailsPublish {
-    // TODO: Provide values here
-    user = 'user'
-    key = 'key'
-    githubSlug = 'foo/bar'
-    license {
-        name = 'Apache-2.0'
-    }
-    title = "jSQL Grails Connector"
-    desc = "Plugin for Grails to connect with jSQL services"
-    developers = [johndoe: "John Doe"]
-    portalUser = ""
-    portalPassword = ""
-}
-*/
-
-/*artifactory {
-    contextUrl = "${artifactory_contextUrl}"   //The base Artifactory URL if not overridden by the publisher/resolver
-    publish {
-        repository {
-            repoKey = 'libs-release-local'
-            username = "${artifactory_user}"
-            password = "${artifactory_password}"
-            maven = true
-        }
-        defaults {
-            publications('mavenJava')
-            publishArtifacts = true
-            properties = ['qa.level': 'basic', 'dev.team' : 'core']
-            publishPom = true
-        }
-    }
-    resolve {
-        repository {
-            repoKey = 'libs-release'
-            username = "${artifactory_user}"
-            password = "${artifactory_password}"
-            maven = true
-
-        }
-    }
-}*/
-
 uploadArchives {
     repositories {
         mavenDeployer {
             repository(url: "https://nexus.jsql.it/nexus/content/repositories/releases/") {
                 authentication(userName: "aradecki", password: "PueJB5Y7Lxg4MGGF")
             }
-            pom.version = "1.0"
+            pom.version = "1.1.5"
             pom.artifactId = "grails-plugin"
             pom.groupId = "jsql"
         }
@@ -150,7 +104,6 @@ assets {
 
 jar {
     baseName = 'jsql-grails-plugin'
-    version = "1.0"
     doLast {
         copy {
             from "build/libs"

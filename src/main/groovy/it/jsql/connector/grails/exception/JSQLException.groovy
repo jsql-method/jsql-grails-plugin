@@ -6,10 +6,10 @@ package it.jsql.connector.grails.exception
 class JSQLException  extends Exception {
 
     public JSQLException(){
-        super();
+        super()
     }
 
     public JSQLException(String message){
-        super("jSQL: "+message);
+        super("JSQL: "+message)
     }
 }
