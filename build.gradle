@@ -7,13 +7,6 @@ buildscript {
     repositories {
         mavenLocal()
         maven { url "https://repo.grails.org/grails/core" }
-        maven {
-            url "${artifactory_releaseUrl}"
-            credentials {
-                username = "${artifactory_user}"
-                password = "${artifactory_password}"
-            }
-        }
     }
     dependencies {
         classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4+"
@@ -22,6 +15,9 @@ buildscript {
         classpath "org.grails.plugins:hibernate4:5.0.10"
     }
 }
+
+version "1.1.6"
+group "it.jsql.connector.grails"
 
 apply plugin: 'maven'
 apply plugin: "war"
@@ -79,7 +75,7 @@ uploadArchives {
             repository(url: "https://nexus.jsql.it/nexus/content/repositories/releases/") {
                 authentication(userName: "aradecki", password: "PueJB5Y7Lxg4MGGF")
             }
-            pom.version = "1.1.5"
+            pom.version = "${version}"
             pom.artifactId = "grails-plugin"
             pom.groupId = "jsql"
         }
