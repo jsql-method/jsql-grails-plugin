@@ -5,22 +5,23 @@ import it.jsql.connector.grails.JsqlController
 import it.jsql.connector.grails.dto.JSQLConfig
 import it.jsql.connector.grails.dto.JSQLResponse
 import it.jsql.connector.grails.exception.JSQLException
+import org.grails.web.json.JSONObject
 
 public class JSQLConnector {
 
-    public static JSQLResponse callSelect(String transactionId, String API_URL, Object data, JSQLConfig jsqlConfig) throws JSQLException {
+    public static JSQLResponse callSelect(String transactionId, String API_URL, JSONObject data, JSQLConfig jsqlConfig) throws JSQLException {
         return call(transactionId, API_URL + "/select", data, jsqlConfig);
     }
 
-    public static JSQLResponse callDelete(String transactionId,String API_URL, Object data, JSQLConfig jsqlConfig) throws JSQLException {
+    public static JSQLResponse callDelete(String transactionId,String API_URL, JSONObject data, JSQLConfig jsqlConfig) throws JSQLException {
         return call(transactionId, API_URL + "/delete", data, jsqlConfig);
     }
 
-    public static JSQLResponse callUpdate(String transactionId,String API_URL, Object data, JSQLConfig jsqlConfig) throws JSQLException {
+    public static JSQLResponse callUpdate(String transactionId,String API_URL, JSONObject data, JSQLConfig jsqlConfig) throws JSQLException {
         return call(transactionId, API_URL + "/update", data, jsqlConfig);
     }
 
-    public static JSQLResponse callInsert(String transactionId,String API_URL, Object data, JSQLConfig jsqlConfig) throws JSQLException {
+    public static JSQLResponse callInsert(String transactionId,String API_URL, JSONObject data, JSQLConfig jsqlConfig) throws JSQLException {
         return call(transactionId, API_URL + "/insert", data, jsqlConfig);
     }
 
@@ -32,7 +33,7 @@ public class JSQLConnector {
         return call(transactionId, API_URL + "/commit", null, jsqlConfig);
     }
 
-    public static JSQLResponse call(String transactionId, String fullUrl, Object request, JSQLConfig jsqlConfig) throws JSQLException {
+    public static JSQLResponse call(String transactionId, String fullUrl, JSONObject request, JSQLConfig jsqlConfig) throws JSQLException {
 
         HttpURLConnection conn = null;
 
@@ -59,7 +60,7 @@ public class JSQLConnector {
             OutputStream os = conn.getOutputStream();
 
             if(request != null){
-                os.write(new Gson().toJson(request).getBytes());
+                os.write(request.toString().getBytes());
             }
 
             os.flush();

@@ -16,17 +16,17 @@ buildscript {
     }
 }
 
-version "1.1.6"
-group "it.jsql.connector.grails"
+version "1.2.3"
+group "it.j.sql.connector.grails"
 
 apply plugin: 'maven'
-apply plugin: "war"
 apply plugin: "eclipse"
 apply plugin: "idea"
 apply plugin: "org.grails.grails-plugin"
 apply plugin: "org.grails.grails-plugin-publish"
 apply plugin: "org.grails.grails-gsp"
 apply plugin: "asset-pipeline"
+apply plugin: 'maven-publish'
 
 ext {
     grailsVersion = project.grailsVersion
@@ -94,19 +94,8 @@ assets {
     packagePlugin = true
 }
 
-/*artifactoryPublish {
-    dependsOn jar
-}*/
-
 jar {
     baseName = 'jsql-grails-plugin'
-    doLast {
-        copy {
-            from "build/libs"
-            into "${deployDir}"
-            include "*.jar"
-        }
-    }
 }
 
 

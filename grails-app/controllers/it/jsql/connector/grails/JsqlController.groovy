@@ -5,6 +5,7 @@ import grails.core.GrailsApplication
 import it.jsql.connector.grails.dto.JSQLConfig
 import it.jsql.connector.grails.dto.JSQLResponse
 import it.jsql.connector.grails.jsql.JSQLConnector
+import org.grails.web.json.JSONObject
 
 class JsqlController {
 
@@ -34,7 +35,14 @@ class JsqlController {
     }
 
     private String getProviderUrl() {
-        return grailsApplication.config.getProperty('jsql.providerUrl') || API_URL
+        String providerUrl = grailsApplication.config.getProperty('jsql.providerUrl');
+
+        if(!providerUrl){
+            return API_URL;
+        }
+
+        return providerUrl;
+
     }
 
     private JSQLConfig jsqlConfig = null;
@@ -55,10 +63,10 @@ class JsqlController {
 
     def select() {
 
-        String data = request.JSON
+        JSONObject data = request.JSON
         String transactionId = request.getHeader(TRANSACTION_ID)
 
-        JSQLResponse jsqlResponse = JSQLConnector.callSelect(transactionId, this.getProviderUrl(), data as HashMap<String, Object>, this.getConfig());
+        JSQLResponse jsqlResponse = JSQLConnector.callSelect(transactionId, this.getProviderUrl(), data, this.getConfig());
 
         if (jsqlResponse.transactionId != null) {
             response.setHeader(TRANSACTION_ID, jsqlResponse.transactionId);
@@ -70,10 +78,10 @@ class JsqlController {
 
     def delete() {
 
-        String data = request.JSON
+        JSONObject data = request.JSON
         String transactionId = request.getHeader(TRANSACTION_ID)
 
-        JSQLResponse jsqlResponse = JSQLConnector.callDelete(transactionId, this.getProviderUrl(), data as HashMap<String, Object>, this.getConfig());
+        JSQLResponse jsqlResponse = JSQLConnector.callDelete(transactionId, this.getProviderUrl(), data, this.getConfig());
 
         if (jsqlResponse.transactionId != null) {
             response.setHeader(TRANSACTION_ID, jsqlResponse.transactionId);
@@ -85,10 +93,10 @@ class JsqlController {
 
     def update() {
 
-        String data = request.JSON
+        JSONObject data = request.JSON
         String transactionId = request.getHeader(TRANSACTION_ID)
 
-        JSQLResponse jsqlResponse = JSQLConnector.callUpdate(transactionId, this.getProviderUrl(), data as HashMap<String, Object>, this.getConfig());
+        JSQLResponse jsqlResponse = JSQLConnector.callUpdate(transactionId, this.getProviderUrl(), data, this.getConfig());
 
         if (jsqlResponse.transactionId != null) {
             response.setHeader(TRANSACTION_ID, jsqlResponse.transactionId);
@@ -100,10 +108,10 @@ class JsqlController {
 
     def insert() {
 
-        String data = request.JSON
+        JSONObject data = request.JSON
         String transactionId = request.getHeader(TRANSACTION_ID)
 
-        JSQLResponse jsqlResponse = JSQLConnector.callInsert(transactionId, this.getProviderUrl(), data as HashMap<String, Object>, this.getConfig());
+        JSQLResponse jsqlResponse = JSQLConnector.callInsert(transactionId, this.getProviderUrl(), data, this.getConfig());
 
         if (jsqlResponse.transactionId != null) {
             response.setHeader(TRANSACTION_ID, jsqlResponse.transactionId);
