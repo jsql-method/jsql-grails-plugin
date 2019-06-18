@@ -24,8 +24,6 @@ class JsqlController {
 
     public static final String TRANSACTION_ID = "txid";
 
-    private static final String API_URL = "https://provider.jsql.it/api/jsql";
-
     private String getApiKey() {
         return grailsApplication.config.getProperty('jsql.apiKey')
     }
@@ -34,15 +32,36 @@ class JsqlController {
         return grailsApplication.config.getProperty('jsql.devKey')
     }
 
-    private String getProviderUrl() {
-        String providerUrl = grailsApplication.config.getProperty('jsql.providerUrl');
+    private static String SERVER_URL = "https://provider.jsql.it";
+    private static String PORT = "";
+    private static final String API_URL = "/api/jsql";
+
+    private String getServerUrl() {
+
+        String providerUrl = grailsApplication.config.getProperty('jsql.serverUrl');
 
         if(!providerUrl){
-            return API_URL;
+            return SERVER_URL;
         }
 
         return providerUrl;
 
+    }
+
+    private String getServerPort(){
+
+        String providerUrl = grailsApplication.config.getProperty('jsql.serverPort');
+
+        if(!providerUrl){
+            return PORT;
+        }
+
+        return providerUrl;
+
+    }
+
+    private String getProviderUrl() {
+        return getServerUrl() + getServerPort() + API_URL;
     }
 
     private JSQLConfig jsqlConfig = null;
